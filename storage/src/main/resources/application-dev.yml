@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    druid:
+    url: jdbc:mysql://172.16.77.154:33306/hml-back-08171809?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: bnsbdlmysql
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/admin/,classpath:/customer/,file:D:\git\hml\images
+okhttp:
+  connectTimeout: 30
+  readTimeout: 30
+  writeTimeout: 30
+  maxIdleConnections: 200 # 连接池中整体的空闲连接的最大数量
+  keepAliveDuration: 300 # 连接空闲时间最多为 300 秒
+project:
+  file:
+    path: /home/sorawingwind/workhome/test/images/
+logging:
+  level:
+    io:
+      ebean:
+        SQL: DEBUG
+        TXN: DEBUG
