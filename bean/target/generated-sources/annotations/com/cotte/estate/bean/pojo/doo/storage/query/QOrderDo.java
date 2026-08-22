@@ -40,9 +40,8 @@ public class QOrderDo extends TQRootBean<OrderDo,QOrderDo> {
   public PString<QOrderDo> color;
   public PString<QOrderDo> bake;
   public PBigDecimal<QOrderDo> count;
+  public PString<QOrderDo> productNo;
   public PBigDecimal<QOrderDo> partSumCount;
-  public PBigDecimal<QOrderDo> price;
-  public PBigDecimal<QOrderDo> sum;
   public PUtilDate<QOrderDo> deliveryTime;
   public PUtilDate<QOrderDo> createTime;
   public PUtilDate<QOrderDo> modifiedTime;
@@ -86,9 +85,8 @@ public class QOrderDo extends TQRootBean<OrderDo,QOrderDo> {
     public static PString<QOrderDo> color = _alias.color;
     public static PString<QOrderDo> bake = _alias.bake;
     public static PBigDecimal<QOrderDo> count = _alias.count;
+    public static PString<QOrderDo> productNo = _alias.productNo;
     public static PBigDecimal<QOrderDo> partSumCount = _alias.partSumCount;
-    public static PBigDecimal<QOrderDo> price = _alias.price;
-    public static PBigDecimal<QOrderDo> sum = _alias.sum;
     public static PUtilDate<QOrderDo> deliveryTime = _alias.deliveryTime;
     public static PUtilDate<QOrderDo> createTime = _alias.createTime;
     public static PUtilDate<QOrderDo> modifiedTime = _alias.modifiedTime;

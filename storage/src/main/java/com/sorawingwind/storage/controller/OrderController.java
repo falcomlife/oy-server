@@ -58,9 +58,9 @@ public class OrderController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('I-3')")
-    public RS getByPage(@RequestParam int pageIndex, @RequestParam int pageSize, @RequestParam(required = false) String customerNameItem, @RequestParam(required = false) String code, @RequestParam(required = false) String inCode, @RequestParam(required = false) String outCode, @RequestParam(required = false) String incomingType, @RequestParam(required = false) String po, @RequestParam(required = false) String item, @RequestParam(required = false) String starttime, @RequestParam(required = false) String endtime, @RequestParam(required = false) String inStarttime, @RequestParam(required = false) String inEndtime, @RequestParam(required = false) String outStarttime, @RequestParam(required = false) String outEndtime, @RequestParam(required = false) String deliveryStarttime, @RequestParam(required = false) String deliveryEndtime) {
-        List<OrderDo> list = this.dao.getByPage(pageIndex, pageSize, customerNameItem, code, inCode, outCode, incomingType, po, item, starttime, endtime, inStarttime, inEndtime, outStarttime, outEndtime, deliveryStarttime, deliveryEndtime);
-        int totleRowCount = this.dao.getCountByPage(pageIndex, pageSize, customerNameItem, code, inCode, outCode, incomingType, po, item, starttime, endtime, inStarttime, inEndtime, outStarttime, outEndtime, deliveryStarttime, deliveryEndtime);
+    public RS getByPage(@RequestParam int pageIndex, @RequestParam int pageSize, @RequestParam(required = false) String customerNameItem, @RequestParam(required = false) String code, @RequestParam(required = false) String inCode, @RequestParam(required = false) String outCode, @RequestParam(required = false) String incomingType, @RequestParam(required = false) String po, @RequestParam(required = false) String item, @RequestParam(required = false) String starttime, @RequestParam(required = false) String endtime, @RequestParam(required = false) String inStarttime, @RequestParam(required = false) String inEndtime, @RequestParam(required = false) String outStarttime, @RequestParam(required = false) String outEndtime, @RequestParam(required = false) String deliveryStarttime, @RequestParam(required = false) String deliveryEndtime, @RequestParam(required = false) String bound) {
+        List<OrderDo> list = this.dao.getByPage(pageIndex, pageSize, customerNameItem, code, inCode, outCode, incomingType, po, item, starttime, endtime, inStarttime, inEndtime, outStarttime, outEndtime, deliveryStarttime, deliveryEndtime, bound);
+        int totleRowCount = this.dao.getCountByPage(pageIndex, pageSize, customerNameItem, code, inCode, outCode, incomingType, po, item, starttime, endtime, inStarttime, inEndtime, outStarttime, outEndtime, deliveryStarttime, deliveryEndtime, bound);
 
         List<DictDo> customerDicts = this.dictController.getDictDoByType("customer");
         // 所属订单组编号
@@ -313,6 +313,42 @@ public class OrderController {
             return map;
         }).collect(Collectors.toList());
         return RS.ok(list);
+    }
+
+    // 按PO号检索订单明细，供入库单绑定使用
+    @GetMapping("/byPoNum")
+    @PreAuthorize("hasAuthority('I-1') or hasAuthority('I-3')")
+    public RS getByPoNum(@RequestParam String poNum) {
+        List<Map<String, String>> list = this.dao.getByPoNum(poNum).stream().map(item -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("id", item.getId());
+            map.put("code", item.getCode());
+            map.put("poNum", item.getPoNum());
+            map.put("item", item.getItem());
+            map.put("part", item.getPart());
+            map.put("count", item.getCount() == null ? "" : item.getCount().toString());
+            return map;
+        }).collect(Collectors.toList());
+        return RS.ok(list);
+    }
+
+    // 批量绑定/解绑订单组
+    @PutMapping("/batchBind")
+    @PreAuthorize("hasAuthority('I-3')")
+    public RS batchBind(@RequestBody Map<String, Object> params) {
+        List<String> orderIds = (List<String>) params.get("orderIds");
+        String orderGroupId = (String) params.get("orderGroupId");
+        if (orderIds == null || orderIds.isEmpty()) {
+            return RS.warn("请先勾选要绑定的订单明细。");
+        }
+        if (StringUtils.isNotBlank(orderGroupId)) {
+            OrderGroupDo group = Ebean.createQuery(OrderGroupDo.class).where().idEq(orderGroupId).findOne();
+            if (group == null) {
+                return RS.warn("所选订单不存在。");
+            }
+        }
+        this.dao.batchBindOrderGroup(orderIds, orderGroupId);
+        return RS.ok();
     }
 
     @GetMapping("/id")

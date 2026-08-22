@@ -25,7 +25,11 @@ public class QAssocOrderGroupDo<R> extends TQAssocBean<OrderGroupDo,R> {
   public PString<R> customerName;
   public PString<R> image;
   public PString<R> poNum;
+  public PString<R> productNo;
   public PBigDecimal<R> count;
+  public PBigDecimal<R> price;
+  public PBigDecimal<R> sum;
+  public PString<R> serialNo;
   public PUtilDate<R> createTime;
   public PUtilDate<R> modifiedTime;
   public PInteger<R> isDelete;

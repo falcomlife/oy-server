@@ -40,6 +40,7 @@ public class QOrderAo extends TQRootBean<OrderAo,QOrderAo> {
   public PString<QOrderAo> poNum;
   public PString<QOrderAo> item;
   public PString<QOrderAo> part;
+  public PString<QOrderAo> productNo;
   public PString<QOrderAo> color;
   public PString<QOrderAo> bake;
   public PString<QOrderAo> bakeId;
@@ -53,8 +54,6 @@ public class QOrderAo extends TQRootBean<OrderAo,QOrderAo> {
   public PBigDecimal<QOrderAo> outStroageSumCount;
   public PInteger<QOrderAo> partSumCountSubOutStroageGoodsSumCount;
   public PInteger<QOrderAo> overPartSumCount;
-  public PBigDecimal<QOrderAo> price;
-  public PBigDecimal<QOrderAo> sum;
   public PInteger<QOrderAo> replatCount;
   public PBigDecimal<QOrderAo> replatRatio;
   public PInteger<QOrderAo> incomingCount;
@@ -103,6 +102,7 @@ public class QOrderAo extends TQRootBean<OrderAo,QOrderAo> {
     public static PString<QOrderAo> poNum = _alias.poNum;
     public static PString<QOrderAo> item = _alias.item;
     public static PString<QOrderAo> part = _alias.part;
+    public static PString<QOrderAo> productNo = _alias.productNo;
     public static PString<QOrderAo> color = _alias.color;
     public static PString<QOrderAo> bake = _alias.bake;
     public static PString<QOrderAo> bakeId = _alias.bakeId;
@@ -116,8 +116,6 @@ public class QOrderAo extends TQRootBean<OrderAo,QOrderAo> {
     public static PBigDecimal<QOrderAo> outStroageSumCount = _alias.outStroageSumCount;
     public static PInteger<QOrderAo> partSumCountSubOutStroageGoodsSumCount = _alias.partSumCountSubOutStroageGoodsSumCount;
     public static PInteger<QOrderAo> overPartSumCount = _alias.overPartSumCount;
-    public static PBigDecimal<QOrderAo> price = _alias.price;
-    public static PBigDecimal<QOrderAo> sum = _alias.sum;
     public static PInteger<QOrderAo> replatCount = _alias.replatCount;
     public static PBigDecimal<QOrderAo> replatRatio = _alias.replatRatio;
     public static PInteger<QOrderAo> incomingCount = _alias.incomingCount;

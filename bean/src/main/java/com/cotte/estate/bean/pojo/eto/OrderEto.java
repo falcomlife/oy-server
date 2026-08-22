@@ -17,8 +17,7 @@ public class OrderEto {
     private String color;
     private String bake;
     private BigDecimal count;
-    private BigDecimal price;
-    private BigDecimal sum;
+    private String productNo;
     private BigDecimal partSumCount;
     private Integer partSumCountCal;
     private Integer outStroageGoodsSumCount;

@@ -39,6 +39,14 @@ public class OrderGroupAo {
 
     private BigDecimal count;
 
+    private String productNo;
+
+    private BigDecimal price;
+
+    private BigDecimal sum;
+
+    private String serialNo;
+
     // 组内订单数
     private Integer orderCount;
 

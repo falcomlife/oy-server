@@ -33,9 +33,9 @@ public class OrderGroupController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('I-9')")
-    public RS getByPage(@RequestParam int pageIndex, @RequestParam int pageSize, @RequestParam(required = false) String customerNameItem, @RequestParam(required = false) String code, @RequestParam(required = false) String po, @RequestParam(required = false) String starttime, @RequestParam(required = false) String endtime) {
-        List<OrderGroupDo> list = this.dao.getByPage(pageIndex, pageSize, customerNameItem, code, po, starttime, endtime);
-        int totalRowCount = this.dao.getCountByPage(customerNameItem, code, po, starttime, endtime);
+    public RS getByPage(@RequestParam int pageIndex, @RequestParam int pageSize, @RequestParam(required = false) String customerNameItem, @RequestParam(required = false) String code, @RequestParam(required = false) String po, @RequestParam(required = false) String starttime, @RequestParam(required = false) String endtime, @RequestParam(required = false) String color) {
+        List<OrderGroupDo> list = this.dao.getByPage(pageIndex, pageSize, customerNameItem, code, po, starttime, endtime, color);
+        int totalRowCount = this.dao.getCountByPage(customerNameItem, code, po, starttime, endtime, color);
         List<DictDo> customerDicts = this.dictController.getDictDoByType("customer");
 
         // 组内订单统计
@@ -81,6 +81,10 @@ public class OrderGroupController {
         doo.setId(UUIDUtil.simpleUUid());
         doo.setCreateTime(new Date());
         doo.setIsDelete(0);
+        // 总价 = 单价 × 数量
+        if (doo.getPrice() != null && doo.getCount() != null) {
+            doo.setSum(doo.getPrice().multiply(doo.getCount()));
+        }
 
         // 同步创建的组内订单（行内ITEM号为空的忽略）
         List<OrderAo> orders = orderGroupAo.getOrders() == null ? new ArrayList<>() : orderGroupAo.getOrders().stream()
@@ -137,6 +141,10 @@ public class OrderGroupController {
         doo.setCustomerName(orderGroupAo.getCustomerNameId());
         doo.setModifiedTime(new Date());
         doo.setIsDelete(0);
+        // 总价 = 单价 × 数量
+        if (doo.getPrice() != null && doo.getCount() != null) {
+            doo.setSum(doo.getPrice().multiply(doo.getCount()));
+        }
         this.dao.update(doo);
         return RS.ok();
     }

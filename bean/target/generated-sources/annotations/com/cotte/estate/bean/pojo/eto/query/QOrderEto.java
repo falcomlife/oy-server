@@ -37,8 +37,7 @@ public class QOrderEto extends TQRootBean<OrderEto,QOrderEto> {
   public PString<QOrderEto> color;
   public PString<QOrderEto> bake;
   public PBigDecimal<QOrderEto> count;
-  public PBigDecimal<QOrderEto> price;
-  public PBigDecimal<QOrderEto> sum;
+  public PString<QOrderEto> productNo;
   public PBigDecimal<QOrderEto> partSumCount;
   public PInteger<QOrderEto> partSumCountCal;
   public PInteger<QOrderEto> outStroageGoodsSumCount;
@@ -89,8 +88,7 @@ public class QOrderEto extends TQRootBean<OrderEto,QOrderEto> {
     public static PString<QOrderEto> color = _alias.color;
     public static PString<QOrderEto> bake = _alias.bake;
     public static PBigDecimal<QOrderEto> count = _alias.count;
-    public static PBigDecimal<QOrderEto> price = _alias.price;
-    public static PBigDecimal<QOrderEto> sum = _alias.sum;
+    public static PString<QOrderEto> productNo = _alias.productNo;
     public static PBigDecimal<QOrderEto> partSumCount = _alias.partSumCount;
     public static PInteger<QOrderEto> partSumCountCal = _alias.partSumCountCal;
     public static PInteger<QOrderEto> outStroageGoodsSumCount = _alias.outStroageGoodsSumCount;

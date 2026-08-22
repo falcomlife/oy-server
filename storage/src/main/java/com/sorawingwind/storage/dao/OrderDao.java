@@ -24,16 +24,23 @@ public class OrderDao {
         return Ebean.createQuery(OrderDo.class).where().idEq(id).findOne();
     }
 
-    public List<OrderDo> getByPage(int pageIndex, int pageSize, String customerNameItem, String code, String inCode, String outCode, String incomingType, String po, String item, String starttime, String endtime, String inStarttime, String inEndtime, String outStarttime, String outEndtime, String deliveryStart, String deliveryEnd) {
+    public List<OrderDo> getByPage(int pageIndex, int pageSize, String customerNameItem, String code, String inCode, String outCode, String incomingType, String po, String item, String starttime, String endtime, String inStarttime, String inEndtime, String outStarttime, String outEndtime, String deliveryStart, String deliveryEnd, String bound) {
 
         StringBuffer sb = new StringBuffer();
-        sb.append(" select DISTINCT o.id,o.code,o.customer_name,o.image,o.po_num,o.item,o.part,o.count,o.part_sum_count,o.price,o.sum,o.create_time,o.modified_time,o.is_delete,o.delivery_time,o.order_group_id from b_order as o ");
+        sb.append(" select DISTINCT o.id,o.code,o.customer_name,o.image,o.po_num,o.item,o.part,o.count,o.part_sum_count,o.product_no,o.create_time,o.modified_time,o.is_delete,o.delivery_time,o.order_group_id from b_order as o ");
         sb.append(" left join b_in_storage as i on o.id = i.order_id ");
         sb.append(" left join b_out_storage as ou on i.id = ou.in_storage_id ");
         sb.append(" where ");
         sb.append(" o.is_delete = false");
         if (StringUtils.isNotBlank(customerNameItem)) {
             sb.append(" and o.customer_name = '" + customerNameItem + "'");
+        }
+        if (StringUtils.isNotBlank(bound)) {
+            if ("true".equals(bound)) {
+                sb.append(" and o.order_group_id is not null ");
+            } else {
+                sb.append(" and o.order_group_id is null ");
+            }
         }
         if (StringUtils.isNotBlank(starttime)) {
             sb.append(" and o.create_time >= '" + starttime + "' ");
@@ -97,23 +104,29 @@ public class OrderDao {
             o.setPart(row.getString("part"));
             o.setPartSumCount(row.getBigDecimal("part_sum_count"));
             o.setPoNum(row.getString("po_num"));
-            o.setPrice(row.getBigDecimal("price"));
-            o.setSum(row.getBigDecimal("sum"));
+            o.setProductNo(row.getString("product_no"));
             o.setOrderGroupId(row.getString("order_group_id"));
             return o;
         }).collect(Collectors.toList());
     }
 
-    public int getCountByPage(int pageIndex, int pageSize, String customerNameItem, String code, String inCode, String outCode, String incomingType, String po, String item, String starttime, String endtime, String inStarttime, String inEndtime, String outStarttime, String outEndtime, String deliveryStart, String deliveryEnd) {
+    public int getCountByPage(int pageIndex, int pageSize, String customerNameItem, String code, String inCode, String outCode, String incomingType, String po, String item, String starttime, String endtime, String inStarttime, String inEndtime, String outStarttime, String outEndtime, String deliveryStart, String deliveryEnd, String bound) {
 
         StringBuffer sb = new StringBuffer();
-        sb.append(" select DISTINCT o.id,o.code,o.customer_name,o.image,o.po_num,o.item,o.part,o.count,o.part_sum_count,o.price,o.sum,o.create_time,o.modified_time,o.is_delete,o.order_group_id from b_order as o ");
+        sb.append(" select DISTINCT o.id,o.code,o.customer_name,o.image,o.po_num,o.item,o.part,o.count,o.part_sum_count,o.product_no,o.create_time,o.modified_time,o.is_delete,o.order_group_id from b_order as o ");
         sb.append(" left join b_in_storage as i on o.id = i.order_id ");
         sb.append(" left join b_out_storage as ou on i.id = ou.in_storage_id ");
         sb.append(" where ");
         sb.append(" o.is_delete = false");
         if (StringUtils.isNotBlank(customerNameItem)) {
             sb.append(" and o.customer_name = '" + customerNameItem + "'");
+        }
+        if (StringUtils.isNotBlank(bound)) {
+            if ("true".equals(bound)) {
+                sb.append(" and o.order_group_id is not null ");
+            } else {
+                sb.append(" and o.order_group_id is null ");
+            }
         }
         if (StringUtils.isNotBlank(starttime)) {
             sb.append(" and o.create_time >= '" + starttime + "' ");
@@ -196,7 +209,7 @@ public class OrderDao {
     public List<OrderDo> getExcels(String customerNameItem, String code, String inCode, String outCode, String incomingType, String po, String item, String starttime, String endtime, String inStarttime, String inEndtime, String outStarttime, String outEndtime, String deliveryStart, String deliveryEnd) {
 
         StringBuffer sb = new StringBuffer();
-        sb.append(" select DISTINCT o.id,o.code,o.customer_name,o.image,o.po_num,o.item,o.part,o.count,o.part_sum_count,o.price,o.sum,o.create_time,o.modified_time,o.delivery_time,o.is_delete,o.order_group_id from b_order as o ");
+        sb.append(" select DISTINCT o.id,o.code,o.customer_name,o.image,o.po_num,o.item,o.part,o.count,o.part_sum_count,o.product_no,o.create_time,o.modified_time,o.delivery_time,o.is_delete,o.order_group_id from b_order as o ");
         sb.append(" left join b_in_storage as i on o.id = i.order_id ");
         sb.append(" left join b_out_storage as ou on i.id = ou.in_storage_id ");
         sb.append(" where ");
@@ -266,11 +279,25 @@ public class OrderDao {
             o.setPart(row.getString("part"));
             o.setPartSumCount(row.getBigDecimal("part_sum_count"));
             o.setPoNum(row.getString("po_num"));
-            o.setPrice(row.getBigDecimal("price"));
-            o.setSum(row.getBigDecimal("sum"));
+            o.setProductNo(row.getString("product_no"));
             o.setOrderGroupId(row.getString("order_group_id"));
             return o;
         }).collect(Collectors.toList());
+    }
+
+    // 按PO号检索订单明细，供入库单绑定使用
+    public List<OrderDo> getByPoNum(String poNum) {
+        return Ebean.createQuery(OrderDo.class).where().like("po_num", "%" + poNum + "%").eq("is_delete", false).orderBy().desc("create_time").setMaxRows(20).findList();
+    }
+
+    // 批量绑定/解绑订单组
+    public void batchBindOrderGroup(List<String> orderIds, String orderGroupId) {
+        List<OrderDo> list = Ebean.createQuery(OrderDo.class).where().idIn(orderIds).findList();
+        for (OrderDo doo : list) {
+            doo.setOrderGroupId(StringUtils.isNotBlank(orderGroupId) ? orderGroupId : null);
+            doo.setModifiedTime(new Date());
+        }
+        Ebean.updateAll(list);
     }
 
     public List<String> loadParts() {
