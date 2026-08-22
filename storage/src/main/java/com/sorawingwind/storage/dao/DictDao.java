@@ -36,6 +36,10 @@ public class DictDao {
         Ebean.delete(DictDo.class, id);
     }
 
+    public void update(DictDo doo) {
+        Ebean.update(doo);
+    }
+
     /**
      * 检查字典值是否被业务数据使用
      * @param dictId 字典项ID

@@ -99,4 +99,19 @@ public class DictController {
         return RS.ok();
     }
 
+    @PutMapping("/item")
+    @PreAuthorize("hasAuthority('I-2')")
+    public RS update(@RequestBody DictAo ao) {
+        if (StringUtils.isBlank(ao.getId()) || StringUtils.isBlank(ao.getItemName())) {
+            return RS.warn("参数不能为空");
+        }
+        DictDo doo = this.dao.getById(ao.getId());
+        if (doo == null) {
+            return RS.warn("字典项不存在");
+        }
+        doo.setItemName(ao.getItemName());
+        this.dao.update(doo);
+        return RS.ok();
+    }
+
 }
