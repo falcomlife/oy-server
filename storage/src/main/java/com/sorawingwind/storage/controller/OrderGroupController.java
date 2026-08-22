@@ -1,10 +1,15 @@
 package com.sorawingwind.storage.controller;
 
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.cotte.estate.bean.pojo.ao.storage.OrderAo;
 import com.cotte.estate.bean.pojo.ao.storage.OrderGroupAo;
+import com.cotte.estate.bean.pojo.ao.storage.OrderGroupExcelAo;
 import com.cotte.estate.bean.pojo.doo.storage.DictDo;
 import com.cotte.estate.bean.pojo.doo.storage.OrderDo;
 import com.cotte.estate.bean.pojo.doo.storage.OrderGroupDo;
+import com.cotte.estate.bean.pojo.eto.OrderGroupEto;
 import com.cotte.estatecommon.PageRS;
 import com.cotte.estatecommon.RS;
 import com.cotte.estatecommon.utils.CodeGenerUtil;
@@ -18,7 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -231,5 +240,59 @@ public class OrderGroupController {
             return map;
         }).collect(Collectors.toList());
         return RS.ok(list);
+    }
+
+    @PostMapping("/excel")
+    @PreAuthorize("hasAuthority('I-9')")
+    public void exportExcel(HttpServletResponse response, @RequestBody OrderGroupExcelAo excelAo) throws Exception {
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        String fileName = URLEncoder.encode("订单管理", "UTF-8");
+        response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx;" + "filename*=utf-8''" + fileName + ".xlsx");
+        OutputStream outputStream = response.getOutputStream();
+
+        // 查询订单组数据
+        List<OrderGroupDo> listdoOri = this.dao.getByPage(1, Integer.MAX_VALUE, excelAo.getCustomerNameItem(), excelAo.getCode(), excelAo.getPo(), excelAo.getStarttime(), excelAo.getEndtime(), excelAo.getColor());
+        List<DictDo> customerDicts = this.dictController.getDictDoByType("customer");
+
+        // 组内订单统计
+        List<String> groupIds = listdoOri.stream().map(OrderGroupDo::getId).collect(Collectors.toList());
+        List<OrderDo> listOrder = new ArrayList<>();
+        if (!groupIds.isEmpty()) {
+            listOrder = Ebean.createQuery(OrderDo.class).where().in("order_group_id", groupIds).eq("is_delete", 0).findList();
+        }
+
+        // 构建导出数据
+        List<OrderGroupAo> listao = new ArrayList<>();
+        for (OrderGroupDo doo : listdoOri) {
+            OrderGroupAo ao = new OrderGroupAo();
+            BeanUtils.copyProperties(doo, ao);
+            List<OrderDo> groupOrders = listOrder.stream().filter(o -> doo.getId().equals(o.getOrderGroupId())).collect(Collectors.toList());
+            // 组内订单数
+            ao.setOrderCount(groupOrders.size());
+            // 组内订单组件总数合计
+            ao.setPartSumCount(groupOrders.stream().map(OrderDo::getPartSumCount).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add));
+            if (StringUtils.isNotBlank(doo.getCustomerName())) {
+                ao.setCustomerName(customerDicts.stream().filter(dict -> dict.getId().equals(doo.getCustomerName())).findFirst().map(DictDo::getItemName).orElse(doo.getCustomerName()));
+            }
+            listao.add(ao);
+        }
+
+        // 转换为导出对象
+        List<OrderGroupEto> list = new ListUtil<OrderGroupAo, OrderGroupEto>().copyList(listao, OrderGroupEto.class);
+        list.forEach(item -> {
+            item.setTime((StringUtils.isBlank(excelAo.getStarttime()) ? "开始" : excelAo.getStarttime().split(" ")[0]) + " - " + (StringUtils.isBlank(excelAo.getEndtime()) ? "结束" : excelAo.getEndtime().split(" ")[0]));
+        });
+
+        // 获取模板路径
+        InputStream resourceAsStream = this.getClass().getResourceAsStream("/excel/orderGroup.xlsx");
+        // 创建输出的excel对象
+        final ExcelWriter write = EasyExcel.write(outputStream).withTemplate(resourceAsStream).build();
+        // 创建第一个sheet页
+        final WriteSheet sheet1 = EasyExcel.writerSheet(0, "订单管理").head(OrderGroupEto.class).build();
+        write.fill(list, sheet1);
+        write.finish();
+        outputStream.flush();
     }
 }
