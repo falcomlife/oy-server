@@ -167,6 +167,8 @@ public class OrderController {
         int count = Ebean.createQuery(OrderDo.class).where().ge("create_time", start).le("create_time", end).findCount();
         doo.setCode(CodeGenerUtil.getCode("OR", count));
         doo.setId(UUIDUtil.simpleUUid());
+        // 前端未选所属订单时传空串，统一转 null，保证“是否绑定订单”按 is null / is not null 筛选正确
+        doo.setOrderGroupId(StringUtils.isNotBlank(doo.getOrderGroupId()) ? doo.getOrderGroupId() : null);
         doo.setCreateTime(new Date());
         doo.setIsDelete(0);
         this.dao.save(doo);
@@ -179,6 +181,8 @@ public class OrderController {
         OrderDo doo = new OrderDo();
         BeanUtils.copyProperties(orderAo, doo);
         doo.setCustomerName(orderAo.getCustomerNameId());
+        // 同 save：空串统一转 null
+        doo.setOrderGroupId(StringUtils.isNotBlank(doo.getOrderGroupId()) ? doo.getOrderGroupId() : null);
         doo.setModifiedTime(new Date());
         doo.setIsDelete(0);
         this.dao.update(doo);

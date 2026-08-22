@@ -37,9 +37,9 @@ public class OrderDao {
         }
         if (StringUtils.isNotBlank(bound)) {
             if ("true".equals(bound)) {
-                sb.append(" and o.order_group_id is not null ");
+                sb.append(" and o.order_group_id is not null and o.order_group_id <> '' ");
             } else {
-                sb.append(" and o.order_group_id is null ");
+                sb.append(" and (o.order_group_id is null or o.order_group_id = '') ");
             }
         }
         if (StringUtils.isNotBlank(starttime)) {
@@ -123,9 +123,9 @@ public class OrderDao {
         }
         if (StringUtils.isNotBlank(bound)) {
             if ("true".equals(bound)) {
-                sb.append(" and o.order_group_id is not null ");
+                sb.append(" and o.order_group_id is not null and o.order_group_id <> '' ");
             } else {
-                sb.append(" and o.order_group_id is null ");
+                sb.append(" and (o.order_group_id is null or o.order_group_id = '') ");
             }
         }
         if (StringUtils.isNotBlank(starttime)) {

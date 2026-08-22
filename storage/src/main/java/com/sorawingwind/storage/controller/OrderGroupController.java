@@ -63,6 +63,41 @@ public class OrderGroupController {
         return RS.ok(new PageRS<>(pageSize, pageIndex, totalRowCount, totalRowCount / pageSize, listao));
     }
 
+    /**
+     * @description: 打印时根据选中的数据重新查询
+     * @author: sorawingwind
+     */
+    @PostMapping("/ids")
+    @PreAuthorize("hasAuthority('I-9')")
+    public RS getByIds(@RequestBody List<String> ids) {
+        List<OrderGroupDo> list = Ebean.createQuery(OrderGroupDo.class).where().idIn(ids).eq("is_delete", 0).findList();
+        List<DictDo> customerDicts = this.dictController.getDictDoByType("customer");
+
+        // 组内订单统计
+        List<String> groupIds = list.stream().map(OrderGroupDo::getId).collect(Collectors.toList());
+        List<OrderDo> listOrder = new ArrayList<>();
+        if (!groupIds.isEmpty()) {
+            listOrder = Ebean.createQuery(OrderDo.class).where().in("order_group_id", groupIds).eq("is_delete", 0).findList();
+        }
+
+        List<OrderGroupAo> listao = new ArrayList<>();
+        for (OrderGroupDo doo : list) {
+            OrderGroupAo ao = new OrderGroupAo();
+            BeanUtils.copyProperties(doo, ao);
+            List<OrderDo> groupOrders = listOrder.stream().filter(o -> doo.getId().equals(o.getOrderGroupId())).collect(Collectors.toList());
+            // 组内订单数
+            ao.setOrderCount(groupOrders.size());
+            // 组内订单组件总数合计
+            ao.setPartSumCount(groupOrders.stream().map(OrderDo::getPartSumCount).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add));
+            if (StringUtils.isNotBlank(doo.getCustomerName())) {
+                ao.setCustomerName(customerDicts.stream().filter(dict -> dict.getId().equals(doo.getCustomerName())).findFirst().map(DictDo::getItemName).orElse(doo.getCustomerName()));
+            }
+            ao.setCustomerNameId(doo.getCustomerName());
+            listao.add(ao);
+        }
+        return RS.ok(listao);
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('I-9')")
     public RS save(@RequestBody OrderGroupAo orderGroupAo) {
