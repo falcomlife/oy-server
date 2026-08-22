@@ -58,14 +58,14 @@ public class GlobalExceptionHandler {
     public RS BindException(HttpServletResponse response, MethodArgumentNotValidException e) {
         log.error("ERROR MESSAGE: {}\n{}", e.getMessage(), ExceptionUtils.getFullStackTrace(e));
         System.out.println(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
-        return RS.bad("您所提交的”"+e.getBindingResult().getAllErrors().get(0).getDefaultMessage()+"“参数数据异常。");
+        return RS.bad("您所提交的”" + e.getBindingResult().getAllErrors().get(0).getDefaultMessage() + "“参数数据异常。");
     }
 
     @ResponseBody
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public RS fileSizeException(HttpServletResponse response, MaxUploadSizeExceededException e) {
         log.error("ERROR MESSAGE: 文件大小超过限制\n{}", ExceptionUtils.getFullStackTrace(e));
-        return RS.bad("文件大小超过512KB限制。");
+        return RS.bad("文件大小超过1024KB限制。");
     }
 
     @ResponseBody

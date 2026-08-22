@@ -82,7 +82,7 @@ public class InStorageController {
             aoInner.setOrderId(itemInner.getString("order_id"));
             aoInner.setOrderCode(itemInner.getString("order_code"));
             aoInner.setIsDelete(0);
-            aoInner.setCustomerName(customerDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("customer_name"))).findFirst().get().getItemName());
+            aoInner.setCustomerName(customerDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("customer_name"))).findFirst().map(DictDo::getItemName).orElse(""));
             aoInner.setCustomerNameId(itemInner.getString("customer_name"));
 //            if (StringUtils.isNotBlank(itemInner.getString("color"))) {
 //                aoInner.setColor(colorDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("color"))).findFirst().get().getItemName());
@@ -90,7 +90,7 @@ public class InStorageController {
             aoInner.setColorId(itemInner.getString("color"));
             aoInner.setOrderColor(colorDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("order_color"))).map(DictDo::getItemName).findFirst().orElse(""));
             aoInner.setOrderColorId(itemInner.getString("order_color"));
-            aoInner.setIncomingType(incomingtypeDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("incoming_type"))).findFirst().get().getItemName());
+            aoInner.setIncomingType(incomingtypeDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("incoming_type"))).findFirst().map(DictDo::getItemName).orElse(""));
             aoInner.setIncomingTypeId(itemInner.getString("incoming_type"));
             aoInner.setIncomingReason(itemInner.getString("incoming_reason"));
             aoInner.setBadReason(itemInner.getString("bad_reason"));
@@ -139,17 +139,17 @@ public class InStorageController {
             aoInner.setOrderId(item.getString("order_id"));
             aoInner.setOrderCode(item.getString("order_code"));
             aoInner.setIsDelete(0);
-            aoInner.setCustomerName(customerDicts.stream().filter(dict -> dict.getId().equals(item.getString("customer_name"))).findFirst().get().getItemName());
+            aoInner.setCustomerName(customerDicts.stream().filter(dict -> dict.getId().equals(item.getString("customer_name"))).findFirst().map(DictDo::getItemName).orElse(""));
             aoInner.setCustomerNameId(item.getString("customer_name"));
 //            aoInner.setColor(colorDicts.stream().filter(dict -> dict.getId().equals(item.getString("color"))).findFirst().get().getItemName());
 //            aoInner.setColorId(item.getString("color"));
-            aoInner.setOrderColor(colorDicts.stream().filter(dict -> dict.getId().equals(item.getString("order_color"))).findFirst().get().getItemName());
+            aoInner.setOrderColor(colorDicts.stream().filter(dict -> dict.getId().equals(item.getString("order_color"))).findFirst().map(DictDo::getItemName).orElse(""));
             aoInner.setOrderColorId(item.getString("order_color"));
-            aoInner.setIncomingType(incomingtypeDicts.stream().filter(dict -> dict.getId().equals(item.getString("incoming_type"))).findFirst().get().getItemName());
+            aoInner.setIncomingType(incomingtypeDicts.stream().filter(dict -> dict.getId().equals(item.getString("incoming_type"))).findFirst().map(DictDo::getItemName).orElse(""));
             aoInner.setIncomingTypeId(item.getString("incoming_type"));
             aoInner.setIncomingReason(item.getString("incoming_reason"));
             aoInner.setBadReason(item.getString("bad_reason"));
-            aoInner.setBake(ctDicts.stream().filter(dict -> dict.getId().equals(item.getString("bake"))).findFirst().get().getItemName());
+            aoInner.setBake(ctDicts.stream().filter(dict -> dict.getId().equals(item.getString("bake"))).findFirst().map(DictDo::getItemName).orElse(""));
             aoInner.setBakeId(item.getString("bake"));
             return aoInner;
         }).collect(Collectors.toList());
@@ -375,10 +375,10 @@ public class InStorageController {
         List<InStorageEto> listeto = this.dao.getExcels(customerNameItem,item,poNum,incomingType,code,starttime,endtime);
         listeto.stream().forEach(it ->
                 {
-                    it.setCustomerName(customerDicts.stream().filter(c -> c.getId().equals(it.getCustomerName())).findFirst().get().getItemName());
+                    it.setCustomerName(customerDicts.stream().filter(c -> c.getId().equals(it.getCustomerName())).findFirst().map(DictDo::getItemName).orElse(""));
                     it.setOrderColor(colorDicts.stream().filter(c -> c.getId().equals(it.getOrderColor())).map(DictDo::getItemName).findFirst().orElse(""));
                     it.setBake(bakeDicts.stream().filter(c -> c.getId().equals(it.getBake())).map(DictDo::getItemName).findFirst().orElse(""));
-                    it.setIncomingType(incomingtypeDicts.stream().filter(c -> c.getId().equals(it.getIncomingType())).findFirst().get().getItemName());
+                    it.setIncomingType(incomingtypeDicts.stream().filter(c -> c.getId().equals(it.getIncomingType())).findFirst().map(DictDo::getItemName).orElse(""));
                 }
         );
         return listeto;
@@ -392,10 +392,10 @@ public class InStorageController {
         List<InStorageEto> listeto = this.dao.getExcelsByOrder(orderIds,code,starttime,endtime,outcode,outstarttime,outendtime);
         listeto.stream().forEach(it ->
                 {
-                    it.setCustomerName(customerDicts.stream().filter(c -> c.getId().equals(it.getCustomerName())).findFirst().get().getItemName());
+                    it.setCustomerName(customerDicts.stream().filter(c -> c.getId().equals(it.getCustomerName())).findFirst().map(DictDo::getItemName).orElse(""));
                     it.setOrderColor(colorDicts.stream().filter(c -> c.getId().equals(it.getOrderColor())).map(DictDo::getItemName).findFirst().orElse(""));
                     it.setBake(bakeDicts.stream().filter(c -> c.getId().equals(it.getBake())).map(DictDo::getItemName).findFirst().orElse(""));
-                    it.setIncomingType(incomingtypeDicts.stream().filter(c -> c.getId().equals(it.getIncomingType())).findFirst().get().getItemName());
+                    it.setIncomingType(incomingtypeDicts.stream().filter(c -> c.getId().equals(it.getIncomingType())).findFirst().map(DictDo::getItemName).orElse(""));
                 }
         );
         return listeto;

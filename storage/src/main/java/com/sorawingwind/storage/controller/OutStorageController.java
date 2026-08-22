@@ -86,7 +86,7 @@ public class OutStorageController {
             aoInner.setCount(itemInner.getString("count"));
             aoInner.setPartSumCount(itemInner.getBigDecimal("part_sum_count"));
             aoInner.setIsDelete(0);
-            aoInner.setCustomerName(customerDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("customer_name"))).findFirst().get().getItemName());
+            aoInner.setCustomerName(customerDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("customer_name"))).findFirst().map(DictDo::getItemName).orElse(""));
             aoInner.setCustomerNameId(itemInner.getString("customer_name"));
             aoInner.setColor(colorDicts.stream().filter(dict -> dict.getId().equals(itemInner.getString("color"))).map(DictDo::getItemName).findFirst().orElse(""));
             aoInner.setColorId(itemInner.getString("color"));
@@ -244,7 +244,7 @@ public class OutStorageController {
         List<DictDo> bakeDicts = this.dictController.getDictDoByType("ct");
         Map<String,Integer> sumMap = this.dao.getAllSumBunchCount(customerNameItem,item,poNum,code,starttime,endtime);
         List<OutStorageAo> listdo = this.dao.getExcels(customerNameItem,item,poNum,code,starttime,endtime).stream().map(iitem -> {
-            iitem.setCustomerName(customerDicts.stream().filter(c -> c.getId().equals(iitem.getCustomerName())).findFirst().get().getItemName());
+            iitem.setCustomerName(customerDicts.stream().filter(c -> c.getId().equals(iitem.getCustomerName())).findFirst().map(DictDo::getItemName).orElse(""));
             iitem.setColor(colorDicts.stream().filter(c -> c.getId().equals(iitem.getColor())).map(DictDo::getItemName).findFirst().orElse(""));
             iitem.setBake(bakeDicts.stream().filter(c -> c.getId().equals(iitem.getBake())).map(DictDo::getItemName).findFirst().orElse(""));
             iitem.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(iitem.getCreateTime()));
@@ -266,7 +266,7 @@ public class OutStorageController {
 
         //获取数据
         List<OutStorageAo> listdo = this.dao.getExcelsByIn(inids,code,starttime,endtime).stream().map(iitem -> {
-            iitem.setCustomerName(customerDicts.stream().filter(c -> c.getId().equals(iitem.getCustomerName())).findFirst().get().getItemName());
+            iitem.setCustomerName(customerDicts.stream().filter(c -> c.getId().equals(iitem.getCustomerName())).findFirst().map(DictDo::getItemName).orElse(""));
             iitem.setColor(colorDicts.stream().filter(c -> c.getId().equals(iitem.getColor())).map(DictDo::getItemName).findFirst().orElse(""));
             iitem.setBake(bakeDicts.stream().filter(c -> c.getId().equals(iitem.getBake())).map(DictDo::getItemName).findFirst().orElse(""));
             iitem.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(iitem.getCreateTime()));

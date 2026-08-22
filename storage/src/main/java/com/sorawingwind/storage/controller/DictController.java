@@ -59,4 +59,44 @@ public class DictController {
         }
     }
 
+    @DeleteMapping("/item")
+    @PreAuthorize("hasAuthority('I-2')")
+    public RS delete(@RequestParam String id, @RequestParam String type) {
+        // 检查字典值是否正在被使用
+        if (StringUtils.isBlank(id) || StringUtils.isBlank(type)) {
+            return RS.warn("参数不能为空");
+        }
+
+        // 只对客户、镀金颜色、烤厅三个类型进行删除前校验
+        if ("customer".equals(type) || "color".equals(type) || "ct".equals(type)) {
+            int usageCount = this.dao.checkDictUsage(id, type);
+            if (usageCount > 0) {
+                String typeName;
+                String usageInfo;
+                switch (type) {
+                    case "customer":
+                        typeName = "客户";
+                        usageInfo = "订单或订单组";
+                        break;
+                    case "color":
+                        typeName = "镀金颜色";
+                        usageInfo = "订单或入库单";
+                        break;
+                    case "ct":
+                        typeName = "烤厅";
+                        usageInfo = "订单或入库单";
+                        break;
+                    default:
+                        typeName = "该字典";
+                        usageInfo = "业务数据";
+                }
+                return RS.warn(typeName + "已被 " + usageCount + " 条" + usageInfo + "使用，无法删除");
+            }
+        }
+
+        // 执行删除
+        this.dao.delete(id);
+        return RS.ok();
+    }
+
 }
