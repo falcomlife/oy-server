@@ -47,12 +47,10 @@ public class OrderDo {
     private String bake;
     @Column(name = "count")
     private BigDecimal count;
+    @Column(name = "product_no")
+    private String productNo;
     @Column(name = "part_sum_count")
     private BigDecimal partSumCount;
-    @Column(name = "price")
-    private BigDecimal price;
-    @Column(name = "sum")
-    private BigDecimal sum;
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "delivery_time")

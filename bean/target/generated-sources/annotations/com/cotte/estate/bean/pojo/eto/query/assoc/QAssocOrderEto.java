@@ -28,8 +28,7 @@ public class QAssocOrderEto<R> extends TQAssocBean<OrderEto,R> {
   public PString<R> color;
   public PString<R> bake;
   public PBigDecimal<R> count;
-  public PBigDecimal<R> price;
-  public PBigDecimal<R> sum;
+  public PString<R> productNo;
   public PBigDecimal<R> partSumCount;
   public PInteger<R> partSumCountCal;
   public PInteger<R> outStroageGoodsSumCount;

@@ -34,7 +34,11 @@ public class QOrderGroupDo extends TQRootBean<OrderGroupDo,QOrderGroupDo> {
   public PString<QOrderGroupDo> customerName;
   public PString<QOrderGroupDo> image;
   public PString<QOrderGroupDo> poNum;
+  public PString<QOrderGroupDo> productNo;
   public PBigDecimal<QOrderGroupDo> count;
+  public PBigDecimal<QOrderGroupDo> price;
+  public PBigDecimal<QOrderGroupDo> sum;
+  public PString<QOrderGroupDo> serialNo;
   public PUtilDate<QOrderGroupDo> createTime;
   public PUtilDate<QOrderGroupDo> modifiedTime;
   public PInteger<QOrderGroupDo> isDelete;
@@ -71,7 +75,11 @@ public class QOrderGroupDo extends TQRootBean<OrderGroupDo,QOrderGroupDo> {
     public static PString<QOrderGroupDo> customerName = _alias.customerName;
     public static PString<QOrderGroupDo> image = _alias.image;
     public static PString<QOrderGroupDo> poNum = _alias.poNum;
+    public static PString<QOrderGroupDo> productNo = _alias.productNo;
     public static PBigDecimal<QOrderGroupDo> count = _alias.count;
+    public static PBigDecimal<QOrderGroupDo> price = _alias.price;
+    public static PBigDecimal<QOrderGroupDo> sum = _alias.sum;
+    public static PString<QOrderGroupDo> serialNo = _alias.serialNo;
     public static PUtilDate<QOrderGroupDo> createTime = _alias.createTime;
     public static PUtilDate<QOrderGroupDo> modifiedTime = _alias.modifiedTime;
     public static PInteger<QOrderGroupDo> isDelete = _alias.isDelete;

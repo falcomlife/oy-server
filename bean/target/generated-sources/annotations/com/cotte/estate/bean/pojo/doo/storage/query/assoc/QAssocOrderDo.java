@@ -31,9 +31,8 @@ public class QAssocOrderDo<R> extends TQAssocBean<OrderDo,R> {
   public PString<R> color;
   public PString<R> bake;
   public PBigDecimal<R> count;
+  public PString<R> productNo;
   public PBigDecimal<R> partSumCount;
-  public PBigDecimal<R> price;
-  public PBigDecimal<R> sum;
   public PUtilDate<R> deliveryTime;
   public PUtilDate<R> createTime;
   public PUtilDate<R> modifiedTime;

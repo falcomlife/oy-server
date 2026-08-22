@@ -31,6 +31,7 @@ public class QAssocOrderAo<R> extends TQAssocBean<OrderAo,R> {
   public PString<R> poNum;
   public PString<R> item;
   public PString<R> part;
+  public PString<R> productNo;
   public PString<R> color;
   public PString<R> bake;
   public PString<R> bakeId;
@@ -44,8 +45,6 @@ public class QAssocOrderAo<R> extends TQAssocBean<OrderAo,R> {
   public PBigDecimal<R> outStroageSumCount;
   public PInteger<R> partSumCountSubOutStroageGoodsSumCount;
   public PInteger<R> overPartSumCount;
-  public PBigDecimal<R> price;
-  public PBigDecimal<R> sum;
   public PInteger<R> replatCount;
   public PBigDecimal<R> replatRatio;
   public PInteger<R> incomingCount;

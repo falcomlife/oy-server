@@ -44,6 +44,8 @@ public class OrderAo {
 
     private String part;
 
+    private String productNo;
+
     private String color;
 
     private String bake;
@@ -74,9 +76,6 @@ public class OrderAo {
     //出库组件超过订单组件的数量
     private Integer overPartSumCount;
 
-    private BigDecimal price;
-
-    private BigDecimal sum;
     // 返镀数量
     private Integer replatCount;
     // 返镀比率
