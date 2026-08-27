@@ -20,4 +20,10 @@ public class OrderGroupEto {
     private BigDecimal partSumCount;
     private Date createTime;
     private String time;
+    // 入库明细行（主子表中的子行）字段：item号
+    private String item;
+    // 入库数量
+    private BigDecimal inStorageCount;
+    // 余量 = 入库数量 - 订单明细组件数 × 1.03
+    private BigDecimal remainCount;
 }

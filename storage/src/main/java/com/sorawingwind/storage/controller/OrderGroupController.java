@@ -7,6 +7,7 @@ import com.cotte.estate.bean.pojo.ao.storage.OrderAo;
 import com.cotte.estate.bean.pojo.ao.storage.OrderGroupAo;
 import com.cotte.estate.bean.pojo.ao.storage.OrderGroupExcelAo;
 import com.cotte.estate.bean.pojo.doo.storage.DictDo;
+import com.cotte.estate.bean.pojo.doo.storage.InStorageDo;
 import com.cotte.estate.bean.pojo.doo.storage.OrderDo;
 import com.cotte.estate.bean.pojo.doo.storage.OrderGroupDo;
 import com.cotte.estate.bean.pojo.eto.OrderGroupEto;
@@ -284,6 +285,36 @@ public class OrderGroupController {
         list.forEach(item -> {
             item.setTime((StringUtils.isBlank(excelAo.getStarttime()) ? "开始" : excelAo.getStarttime().split(" ")[0]) + " - " + (StringUtils.isBlank(excelAo.getEndtime()) ? "结束" : excelAo.getEndtime().split(" ")[0]));
         });
+
+        // 查询组内订单对应的实际入库记录
+        List<String> orderIds = listOrder.stream().map(OrderDo::getId).collect(Collectors.toList());
+        List<InStorageDo> listIn = new ArrayList<>();
+        if (!orderIds.isEmpty()) {
+            listIn = Ebean.createQuery(InStorageDo.class).where().in("order_id", orderIds).eq("is_delete", 0).findList();
+        }
+
+        // 主子形式：每个订单组行下追加该组所有订单的实际入库明细行（item号、入库数量、余量）
+        List<OrderGroupEto> listWithDetail = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            OrderGroupEto groupEto = list.get(i);
+            listWithDetail.add(groupEto);
+            OrderGroupDo doo = listdoOri.get(i);
+            List<OrderDo> groupOrders = listOrder.stream().filter(o -> doo.getId().equals(o.getOrderGroupId())).collect(Collectors.toList());
+            for (OrderDo order : groupOrders) {
+                List<InStorageDo> orderIns = listIn.stream().filter(in -> order.getId().equals(in.getOrderId())).sorted(Comparator.comparing(InStorageDo::getCreateTime, Comparator.nullsFirst(Comparator.naturalOrder()))).collect(Collectors.toList());
+                for (InStorageDo in : orderIns) {
+                    OrderGroupEto detail = new OrderGroupEto();
+                    detail.setItem(order.getItem());
+                    detail.setInStorageCount(in.getBunchCount());
+                    // 余量 = 入库数量 - 订单明细组件数 × 1.03
+                    if (in.getBunchCount() != null && order.getPartSumCount() != null) {
+                        detail.setRemainCount(in.getBunchCount().subtract(order.getPartSumCount().multiply(new BigDecimal("1.03"))).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    }
+                    listWithDetail.add(detail);
+                }
+            }
+        }
+        list = listWithDetail;
 
         // 获取模板路径
         InputStream resourceAsStream = this.getClass().getResourceAsStream("/excel/orderGroup.xlsx");

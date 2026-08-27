@@ -1,7 +1,7 @@
 package com.cotte.estatecommon.enums;
 
 public enum InUnit {
-    ONE("个", 1), KG("千克", 2), G("克", 3);
+    ONE("个", 1), KG("千克", 2), G("克", 3), CHUAN("串", 4);
 
     private String name;
     private int index;
@@ -31,6 +31,8 @@ public enum InUnit {
             return InUnit.KG.getName();
         } else if (index == InUnit.G.getIndex()) {
             return InUnit.G.getName();
+        } else if (index == InUnit.CHUAN.getIndex()) {
+            return InUnit.CHUAN.getName();
         } else{
             return null;
         }
